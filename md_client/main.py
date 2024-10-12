@@ -174,7 +174,7 @@ class WordCompletionApp(MDApp):
 
         # Connect to the server
         try:
-            sio.connect("http://localhost:8000", wait_timeout=15)
+            sio.connect("http://localhost:8000", wait_timeout=120)
             print("Attempting to connect to the server...")
         except Exception as e:
             print(f"Connection failed: {e}")
