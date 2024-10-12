@@ -1,0 +1,207 @@
+#:kivy 2.1.0
+#:import MDScreen kivymd.uix.screen.MDScreen
+#:import MDLabel kivymd.uix.label.MDLabel
+#:import MDTextField kivymd.uix.textfield.MDTextField
+#:import MDRaisedButton kivymd.uix.button.MDRaisedButton
+#:import MDBoxLayout kivymd.uix.boxlayout.MDBoxLayout
+#:import MDGridLayout kivymd.uix.gridlayout.MDGridLayout
+#:import MDScrollView kivymd.uix.scrollview.MDScrollView
+#:import toast kivymd.toast.toast
+
+MDScreenManager:
+    LoginScreen:
+        name: "login"
+    SearchRoomsScreen:
+        name: "search_rooms"
+    GameScreen:
+        name: "game"
+
+<LoginScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Word Completion Game"
+            navigation_icon: ""
+            elevation: 10
+            right_action_items: [['brightness-4', lambda x: app.toggle_theme(x, app.theme_cls.theme_style != "Dark")]]
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: 50
+            spacing: 20
+
+            # MDLabel:
+            #     text: "Word Completion Game"
+            #     font_style: 'H4'
+            #     halign: 'center'
+
+            MDBoxLayout:
+                size_hint_y: 0.3  # Adjust this value to control vertical positioning
+                size_hint_x: 1
+                padding: 20
+
+                FloatLayout:
+                    MDIcon:
+                        icon: "word_comp_logo-big.jpg"  # You can change this to any other suitable icon
+                        font_size: "160sp"
+                        halign: 'center'
+                        valign: 'center'
+                        theme_text_color: "Primary"
+                        size_hint: (1, 1)
+                        size: self.texture_size
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+            MDTextField:
+                id: username
+                hint_text: "Username"
+                multiline: False
+                write_tab: False
+
+            MDTextField:
+                id: room
+                hint_text: "Room Name"
+                multiline: False
+                write_tab: False
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: '40dp'
+                spacing: 10
+
+                MDTextField:
+                    id: color_picker_text
+                    hint_text: "Color (e.g., #FF0000)"
+                    multiline: False
+                    write_tab: False
+
+                MDRaisedButton:
+                    text: "Pick Color"
+                    size_hint_x: None
+                    width: '100dp'
+                    on_release: app.show_color_picker()
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: '48dp'
+                spacing: 10
+
+                MDRaisedButton:
+                    text: "Join Game"
+                    on_release: root.join_game()
+
+                MDRaisedButton:
+                    text: "Search Rooms"
+                    on_release: root.go_to_search_rooms()
+
+<SearchRoomsScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Available Rooms"
+            navigation_icon: ""
+            elevation: 10
+            left_action_items: [['arrow-left-bold', lambda x: setattr(app.root, 'current', 'login')]]
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: 20
+            spacing: 10
+            size_hint_x: 1
+
+            MDScrollView:
+                GridLayout:
+                    id: rooms_layout
+                    cols: 1
+                    spacing: 10,10
+                    size_hint: 1, None
+                    height: self.minimum_height
+
+<GameScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Word Completion Game"
+            navigation_icon: ""
+            elevation: 10
+            right_action_items: [['brightness-4', lambda x: app.toggle_theme(x, app.theme_cls.theme_style != "Dark")]]
+            left_action_items: [['arrow-left-bold', lambda x: root.leave_room()]]
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: 10
+            spacing: 10
+
+            MDScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+                MDGridLayout:
+                    cols: 1
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: "12dp"
+                    padding: "12dp"
+
+                    # MDLabel:
+                    #     text: root.board
+                    #     markup: True
+                    #     size_hint_y: None
+                    #     height: self.texture_size[1]
+                    #     text_size: self.width, None
+
+                    MDCard:
+                        orientation: "vertical"
+                        padding: "8dp"
+                        size_hint: None, None
+                        size: "280dp", self.minimum_height
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                        elevation: 4
+                        shadow_softness: 4
+                        shadow_offset: (0, 2)
+
+                        MDLabel:
+                            text: root.board
+                            markup: True
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            text_size: self.width - 32, None  # Adjust for padding
+                            padding: 16, 16
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: '40dp'
+                spacing: 10
+
+                MDTextField:
+                    id: text_input
+                    hint_text: "Enter text"
+                    multiline: False
+                    write_tab: False
+
+                MDRaisedButton:
+                    id: send_button
+                    text: "Send"
+                    size_hint_x: None
+                    width: '100dp'
+                    disabled: True
+                    on_release: root.send_text()
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: '40dp'
+
+                MDRectangleFlatIconButton:
+                    id: caller   # ADDED
+                    icon: 'account-group'
+                    text: "Users"
+                    size_hint_x: None
+                    width: '150dp'
+                    on_press: root.drop()
+
+                MDLabel:
+                    text: "    Current Turn: " + root.current_turn
+                    size_hint_y: None
+                    height: '30dp'
+                    halign: "left"
+                    valign: "middle"
+                    text_size: self.size

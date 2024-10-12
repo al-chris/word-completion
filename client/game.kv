@@ -1,0 +1,223 @@
+#:kivy 2.1.0
+
+WindowManager:
+    LoginScreen:
+        name: "login"
+    SearchRoomsScreen:
+        name: "search_rooms"
+    GameScreen:
+        name: "game"
+
+<ColorPickerPopup>:
+    title: "Select Your Color"
+    size_hint: 0.8, 0.8
+    auto_dismiss: False
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        ColorPicker:
+            id: color_picker_widget
+            size_hint_y: 0.9
+
+        BoxLayout:
+            size_hint_y: 0.1
+            spacing: 10
+
+            Button:
+                text: "Cancel"
+                on_press: root.dismiss()
+
+            Button:
+                text: "Select"
+                on_press:
+                    app.select_color(color_picker_widget.color)
+                    root.dismiss()
+
+<LeftRoomPopup>:
+    title: "Left Room"
+    size_hint: 0.6, 0.4
+    auto_dismiss: True
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "You have left the room."
+            halign: "center"
+            valign: "middle"
+            text_size: self.size
+
+        Button:
+            text: "OK"
+            size_hint_y: None
+            height: '40dp'
+            on_press: root.dismiss()
+
+<DisconnectPopup>:
+    title: "Disconnected"
+    size_hint: 0.6, 0.4
+    auto_dismiss: True
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "You have been disconnected from the server."
+            halign: "center"
+            valign: "middle"
+            text_size: self.size
+
+        Button:
+            text: "OK"
+            size_hint_y: None
+            height: '40dp'
+            on_press: root.dismiss()
+
+<LoginScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 50
+        spacing: 20
+
+        Label:
+            text: "Word Completion Game"
+            font_size: 32
+
+        TextInput:
+            id: username
+            hint_text: "Username"
+            multiline: False
+            write_tab: False
+
+        TextInput:
+            id: room
+            hint_text: "Room Name"
+            multiline: False
+            write_tab: False
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '40dp'
+            spacing: 10
+
+            TextInput:
+                id: color_picker_text
+                hint_text: "Color (e.g., #FF0000)"
+                multiline: False
+                write_tab: False
+
+            Button:
+                text: "Pick Color"
+                size_hint_x: None
+                width: '100dp'
+                on_press: app.show_color_picker()
+
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+            spacing: 10
+
+            Button:
+                text: "Join Game"
+                on_press: root.join_game()
+
+            Button:
+                text: "Search Rooms"
+                on_press: root.go_to_search_rooms()
+
+<SearchRoomsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: "Available Rooms"
+            font_size: 24
+            size_hint_y: None
+            height: '40dp'
+
+        ScrollView:
+            GridLayout:
+                id: rooms_layout
+                cols: 1
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
+
+                # Dynamically added buttons for each room
+
+        Button:
+            text: "Back to Login"
+            size_hint_y: None
+            height: '48dp'
+            on_press: app.root.current = "login"
+
+<GameScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        ScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+
+                Label:
+                    text: root.board
+                    markup: True
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+
+        BoxLayout:
+            size_hint_y: None
+            height: '40dp'
+            spacing: 10
+
+            TextInput:
+                id: text_input
+                hint_text: "Enter text"
+                multiline: False
+                write_tab: False
+
+            Button:
+                id: send_button
+                text: "Send"
+                size_hint_x: None
+                width: '100dp'
+                disabled: True  # Initially disabled until it's your turn
+                on_press: root.send_text()
+
+        BoxLayout:
+            size_hint_y: None
+            height: '40dp'
+
+            Spinner:
+                text: "Users"
+                values: root.users
+                size_hint_x: None
+                width: '150dp'
+
+            Label:
+                text: "Current Turn: " + root.current_turn
+                size_hint_y: None
+                height: '30dp'
+                halign: "left"
+                valign: "middle"
+                text_size: self.size
+
+            Button:
+                text: "Leave Room"
+                size_hint_x: None
+                width: '120dp'
+                on_press: root.leave_room()

@@ -1,0 +1,13 @@
+# env files
+.env
+.env.local
+
+# build files
+/build
+/dist
+
+# pycache
+__pycache__/
+
+# vscode
+.vscode/
