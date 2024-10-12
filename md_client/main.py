@@ -23,8 +23,8 @@ from dotenv import load_dotenv
 load_dotenv()
 import socketio
 
-Window.size = (300,648)
-Config.set('graphics', 'resizable', False)
+# Window.size = (300,648)
+# Config.set('graphics', 'resizable', False)
 Config.set('kivy','window_icon','word_comp_logo.ico')
 API_URL = os.getenv("API_URL")
 # Initialize Socket.IO client
@@ -174,7 +174,7 @@ class WordCompletionApp(MDApp):
 
         # Connect to the server
         try:
-            sio.connect("http://localhost:8000", wait_timeout=120)
+            sio.connect(API_URL, wait_timeout=120)
             print("Attempting to connect to the server...")
         except Exception as e:
             print(f"Connection failed: {e}")
