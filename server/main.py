@@ -7,7 +7,7 @@ import uvicorn
 # Create a Socket.IO server with explicit CORS settings
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=["*"])
 app = FastAPI()
-sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
+sio_app = socketio.ASGIApp(sio)
 
 # Add CORS middleware to FastAPI
 app.add_middleware(
