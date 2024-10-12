@@ -7,7 +7,7 @@ import uvicorn
 # Create a Socket.IO server with explicit CORS settings
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=["*"])
 app = FastAPI()
-sio_app = socketio.ASGIApp(sio)
+sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 # Add CORS middleware to FastAPI
 app.add_middleware(
@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 
-app.mount("/", sio_app)
+# app.mount("/", sio_app)
 
 # Connection Manager
 class ConnectionManager:
@@ -167,6 +167,10 @@ async def list_rooms(sid, data):
     rooms = manager.get_all_rooms()
     await sio.emit("rooms_list", {"rooms": rooms}, room=sid)
     print(f"Sent list of rooms to SID '{sid}': {rooms}")
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     uvicorn.run(sio_app, host="0.0.0.0", port=8000)
