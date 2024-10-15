@@ -18,15 +18,15 @@ from kivy.clock import mainthread
 from kivy.core.window import Window
 from kivy.config import Config
 from kivy.properties import StringProperty, ListProperty
-from dotenv import load_dotenv
-
-load_dotenv()
 import socketio
+
+# Don't use env files (didn't work for me)
 
 # Window.size = (300,648)
 # Config.set('graphics', 'resizable', False)
+Window.softinput_mode = "below_target"
 Config.set('kivy','window_icon','word_comp_logo.ico')
-API_URL = os.getenv("API_URL")
+API_URL = "https://word-completion-bcih.onrender.com"
 # Initialize Socket.IO client
 sio = socketio.Client()
 
