@@ -182,7 +182,10 @@ class WordCompletionApp(MDApp):
         return Builder.load_file("game.kv")
     
     def on_start(self):
-        self.fps_monitor_start()
+        # self.fps_monitor_start()
+        if not self.connected:
+            print("Not connected to the server. Please try again later.")
+            self.show_disconnect_dialog()
     
     def toggle_theme(self, instance, value):
         self.theme_cls.theme_style = "Dark" if value else "Light"
@@ -320,11 +323,27 @@ class WordCompletionApp(MDApp):
         )
         dialog.open()
 
+    def reconnect(self):
+        if not self.connected:
+            try:
+                sio.connect(API_URL, wait_timeout=120)
+                print("Attempting to reconnect to the server...")
+            except Exception as e:
+                print(f"Reconnection failed: {e}")
+        else:
+            print("Already connected to the server.")
+
     @mainthread
     def show_disconnect_dialog(self):
         dialog = DisconnectDialog(
             text="You have been disconnected from the server.",
             buttons=[
+                MDRaisedButton(
+                    text="RECONNECT",
+                    # on_release=lambda x: dialog.dismiss()
+                    # on_release, the app will reconnect
+                    on_release=lambda x: self.reconnect()
+                ),
                 MDRaisedButton(
                     text="OK",
                     on_release=lambda x: dialog.dismiss()
